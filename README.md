@@ -1,93 +1,183 @@
-# Text Sentiment Analysis MLOps Project
+# Text Sentiment Analysis with MLOps
 
-This project implements a machine learning pipeline for sentiment analysis using the IMDB movie reviews dataset. It follows MLOps best practices and includes components for data processing, model training, and model serving.
+A machine learning project that performs sentiment analysis on text using DistilBERT, with a modern web interface and MLOps practices.
+
+## Project Overview
+
+This project implements a sentiment analysis system that:
+- Uses DistilBERT for text classification
+- Provides a modern web interface for user interaction
+- Implements MLOps best practices
+- Includes data processing, model training, and serving pipelines
 
 ## Project Structure
 
 ```
 text-sentiment-mlops/
 ├── data/
-│   ├── raw/               # Raw IMDB dataset files
-│   └── processed/         # Processed and cleaned data
+│   └── processed/
+│       ├── imdb_train_processed.csv
+│       ├── imdb_test_processed.csv
+│       └── metadata.json
 ├── models/
-│   └── saved/            # Saved trained models and tokenizers
+│   └── saved/
+│       ├── sentiment_model/
+│       └── sentiment_tokenizer/
 ├── scripts/
-│   ├── data_processing/  # Data preprocessing scripts
-│   └── model_training/   # Model training scripts
-└── requirements.txt      # Project dependencies
+│   ├── data_processing/
+│   │   └── prepare_data.py
+│   ├── model_training/
+│   │   ├── preprocess_data.py
+│   │   └── train_model.py
+│   └── model_serving/
+│       ├── api.py
+│       ├── predict.py
+│       ├── test_api.py
+│       └── index.html
+└── README.md
 ```
 
-## Setup Instructions
+## Prerequisites
+
+- Python 3.8+
+- PyTorch
+- Transformers
+- FastAPI
+- Pandas
+- scikit-learn
+- uvicorn
+
+## Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/salik786/text-sentiment-mlops.git
-   cd text-sentiment-mlops
-   ```
+```bash
+git clone <repository-url>
+cd text-sentiment-mlops
+```
 
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+2. Create and activate a virtual environment (recommended):
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
 3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-## Data Preparation
-
-1. Run the data processing script to download and prepare the IMDB dataset:
-   ```bash
-   python scripts/data_processing/preprocess_data.py
-   ```
-
-This will:
-- Download the IMDB dataset
-- Clean and preprocess the text data
-- Convert labels to sentiment values
-- Save processed data in CSV format
-
-## Project Components
+## Usage
 
 ### 1. Data Processing
-- Text cleaning and preprocessing
-- Label conversion
-- Dataset statistics generation
+
+Process the raw data:
+```bash
+python scripts/data_processing/prepare_data.py
+```
 
 ### 2. Model Training
-The project uses DistilBERT for sentiment classification with the following features:
-- Fine-tuning on IMDB dataset
-- Training metrics: accuracy, F1-score, precision, recall
-- Model checkpointing and evaluation
-- Training progress logging
 
-Current model performance:
-- Accuracy: 80%
-- F1-score: 0.74
-- Precision: 0.95
-- Recall: 0.61
+Train the sentiment analysis model:
+```bash
+python scripts/model_training/train_model.py
+```
 
-### 3. Model Serving (Coming Soon)
-- FastAPI-based REST API
-- Model inference endpoints
-- Input validation and error handling
+### 3. Running the Application
 
-## Dependencies
+You need to run two servers:
 
-Core libraries:
-- numpy
-- pandas
-- scikit-learn
-- torch
-- transformers
-- datasets
+1. Start the FastAPI server (in one terminal):
+```bash
+python scripts/model_serving/api.py
+```
+The API will be available at `http://127.0.0.1:8000`
 
-Development tools:
-- jupyter (for notebook experimentation)
-- fastapi (for model serving)
-- uvicorn (for API server)
+2. Start the web interface server (in another terminal):
+```bash
+cd scripts/model_serving
+python -m http.server 8080
+```
+The web interface will be available at `http://localhost:8080/index.html`
+
+### 4. Testing the API
+
+You can test the API using the provided test script:
+```bash
+python scripts/model_serving/test_api.py
+```
+
+## API Endpoints
+
+- `GET /health`: Health check endpoint
+- `POST /predict`: Sentiment analysis endpoint
+  ```json
+  {
+    "text": "Your text here"
+  }
+  ```
+
+## Web Interface Features
+
+The web interface provides:
+- Modern, responsive design
+- Real-time sentiment analysis
+- Visual confidence indicators
+- Detailed probability scores
+- Loading animations
+- Error handling
+
+## Model Details
+
+- Architecture: DistilBERT
+- Task: Binary sentiment classification (positive/negative)
+- Input: Text
+- Output: Sentiment label, confidence score, and probability distribution
+
+## Development
+
+### Adding New Features
+
+1. Data Processing:
+   - Modify `scripts/data_processing/prepare_data.py`
+   - Add new preprocessing steps as needed
+
+2. Model Training:
+   - Modify `scripts/model_training/train_model.py`
+   - Adjust hyperparameters or model architecture
+
+3. API:
+   - Modify `scripts/model_serving/api.py`
+   - Add new endpoints or modify existing ones
+
+4. Web Interface:
+   - Modify `scripts/model_serving/index.html`
+   - Update the UI/UX as needed
+
+### Testing
+
+Run the test script to verify the API functionality:
+```bash
+python scripts/model_serving/test_api.py
+```
+
+## Troubleshooting
+
+1. Port Already in Use:
+   ```bash
+   # Find process using port 8080
+   lsof -i :8080
+   # Kill the process
+   kill <PID>
+   ```
+
+2. Model Loading Issues:
+   - Ensure model files exist in `models/saved/`
+   - Check model and tokenizer paths in `predict.py`
+
+3. API Connection Issues:
+   - Verify both servers are running
+   - Check CORS settings in `api.py`
+   - Ensure correct ports are being used
 
 ## Contributing
 
