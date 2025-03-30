@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from predict import SentimentPredictor
 import uvicorn
@@ -8,6 +9,15 @@ app = FastAPI(
     title="Sentiment Analysis API",
     description="API for predicting sentiment of text using DistilBERT",
     version="1.0.0"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
 # Initialize the model
@@ -46,4 +56,4 @@ async def health_check():
 
 # Run the API server
 if __name__ == "__main__":
-    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True) 
+    uvicorn.run("api:app", host="127.0.0.1", port=8070, reload=True) 
