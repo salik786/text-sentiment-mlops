@@ -1,0 +1,13 @@
+# Core libraries
+numpy
+pandas
+scikit-learn
+torch
+transformers
+
+# For notebook experimentation
+jupyter
+
+# For model serving later
+fastapi
+uvicorn 
