@@ -4,6 +4,7 @@ pandas
 scikit-learn
 torch
 transformers
+datasets
 
 # For notebook experimentation
 jupyter
