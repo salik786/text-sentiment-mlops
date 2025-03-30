@@ -38,6 +38,15 @@ def train_model():
     train_df = train_df.sample(1000, random_state=42)
     test_df = test_df.sample(200, random_state=42)
     
+    # Convert sentiment to numeric labels
+    label_map = {'positive': 1, 'negative': 0}
+    train_df['labels'] = train_df['sentiment'].map(label_map).astype('int64')
+    test_df['labels'] = test_df['sentiment'].map(label_map).astype('int64')
+    
+    # Keep only necessary columns
+    train_df = train_df[['text', 'labels']]
+    test_df = test_df[['text', 'labels']]
+    
     # Convert to Hugging Face datasets
     train_dataset = Dataset.from_pandas(train_df)
     test_dataset = Dataset.from_pandas(test_df)
@@ -45,15 +54,35 @@ def train_model():
     # Load tokenizer and model
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     model = DistilBertForSequenceClassification.from_pretrained(
-        'distilbert-base-uncased', num_labels=2
+        'distilbert-base-uncased',
+        num_labels=2,
+        problem_type="single_label_classification"
     )
     
     # Tokenize data
     def tokenize_function(examples):
-        return tokenizer(examples['text'], padding='max_length', truncation=True, max_length=512)
+        return tokenizer(
+            examples['text'],
+            padding='max_length',
+            truncation=True,
+            max_length=512
+        )
     
-    train_dataset = train_dataset.map(tokenize_function, batched=True)
-    test_dataset = test_dataset.map(tokenize_function, batched=True)
+    # Tokenize and format datasets
+    train_dataset = train_dataset.map(
+        tokenize_function,
+        batched=True,
+        remove_columns=['text']
+    )
+    test_dataset = test_dataset.map(
+        tokenize_function,
+        batched=True,
+        remove_columns=['text']
+    )
+    
+    # Set format for pytorch
+    train_dataset.set_format('torch')
+    test_dataset.set_format('torch')
     
     # Define training arguments
     training_args = TrainingArguments(
