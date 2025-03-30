@@ -9,4 +9,5 @@ venv/
 
 # Project specific
 data/raw/
+data/processed/
 models/saved/ 
