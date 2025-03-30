@@ -1,73 +1,78 @@
 # Text Sentiment Analysis MLOps Project
 
-This project implements a machine learning pipeline for sentiment analysis using the IMDB movie reviews dataset. It follows MLOps best practices with proper data processing, model training, and deployment pipelines.
+This project implements a machine learning pipeline for sentiment analysis using the IMDB movie reviews dataset. It follows MLOps best practices and includes components for data processing, model training, and model serving.
 
 ## Project Structure
 
 ```
 text-sentiment-mlops/
 ├── data/
-│   ├── raw/           # Raw input data
-│   └── processed/     # Processed/cleaned data
-├── models/            # Saved model files
+│   ├── raw/               # Raw IMDB dataset files
+│   └── processed/         # Processed and cleaned data
+├── models/
+│   └── saved/            # Saved trained models and tokenizers
 ├── scripts/
-│   └── data_processing/  # Data processing scripts
-└── venv/              # Python virtual environment
+│   ├── data_processing/  # Data preprocessing scripts
+│   └── model_training/   # Model training scripts
+└── requirements.txt      # Project dependencies
 ```
 
-## Setup
+## Setup Instructions
 
 1. Clone the repository:
-```bash
-git clone https://github.com/salik786/text-sentiment-mlops.git
-cd text-sentiment-mlops
-```
+   ```bash
+   git clone https://github.com/salik786/text-sentiment-mlops.git
+   cd text-sentiment-mlops
+   ```
 
 2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Mac/Linux
-# or
-venv\Scripts\activate     # On Windows
-```
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
 3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Data Preparation
 
-The project uses the IMDB movie reviews dataset. To prepare the data:
-
-1. Run the data processing script:
-```bash
-python scripts/data_processing/prepare_data.py
-```
+1. Run the data processing script to download and prepare the IMDB dataset:
+   ```bash
+   python scripts/data_processing/preprocess_data.py
+   ```
 
 This will:
 - Download the IMDB dataset
-- Save raw data in `data/raw/`
-- Process and save cleaned data in `data/processed/`
-- Generate metadata in `data/processed/metadata.json`
+- Clean and preprocess the text data
+- Convert labels to sentiment values
+- Save processed data in CSV format
 
 ## Project Components
 
-### Data Processing
-- `scripts/data_processing/prepare_data.py`: Downloads and prepares the IMDB dataset
-- Handles text preprocessing and feature engineering
-- Creates train/test splits
-- Generates metadata
+### 1. Data Processing
+- Text cleaning and preprocessing
+- Label conversion
+- Dataset statistics generation
 
-### Model Training (Coming Soon)
-- Will include model training scripts
-- Model evaluation and metrics
-- Model saving and versioning
+### 2. Model Training
+The project uses DistilBERT for sentiment classification with the following features:
+- Fine-tuning on IMDB dataset
+- Training metrics: accuracy, F1-score, precision, recall
+- Model checkpointing and evaluation
+- Training progress logging
 
-### Model Serving (Coming Soon)
-- FastAPI service for model inference
-- API documentation
-- Docker containerization
+Current model performance:
+- Accuracy: 80%
+- F1-score: 0.74
+- Precision: 0.95
+- Recall: 0.61
+
+### 3. Model Serving (Coming Soon)
+- FastAPI-based REST API
+- Model inference endpoints
+- Input validation and error handling
 
 ## Dependencies
 
