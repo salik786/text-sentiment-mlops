@@ -1,8 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from predict import SentimentPredictor
 import uvicorn
+import os
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -16,12 +19,22 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
+    allow_methods=["*"],  # Allows all methods  
     allow_headers=["*"],  # Allows all headers
 )
 
-# Initialize the model
-sentiment_predictor = SentimentPredictor()
+# Mount static files directory
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Get model and tokenizer paths from environment variables
+MODEL_PATH = os.getenv("MODEL_PATH")
+TOKENIZER_PATH = os.getenv("TOKENIZER_PATH")
+
+# Initialize the model with environment variables
+sentiment_predictor = SentimentPredictor(
+    model_path=MODEL_PATH,
+    tokenizer_path=TOKENIZER_PATH
+)
 
 # Define request model
 class SentimentRequest(BaseModel):
@@ -35,6 +48,13 @@ class SentimentResponse(BaseModel):
     probabilities: dict
 
 # Define API endpoints
+@app.get("/")
+async def read_root():
+    """
+    Serve the index.html file
+    """
+    return FileResponse('index.html')
+
 @app.post("/predict", response_model=SentimentResponse)
 async def predict_sentiment(request: SentimentRequest):
     """
@@ -56,4 +76,4 @@ async def health_check():
 
 # Run the API server
 if __name__ == "__main__":
-    uvicorn.run("api:app", host="127.0.0.1", port=8070, reload=True) 
+    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True) 
