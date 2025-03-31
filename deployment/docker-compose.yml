@@ -9,13 +9,13 @@ services:
       - "8000:8000"
     volumes:
       - ../models/saved:/app/models/saved
-      - ../scripts/model_serving/monitoring/logs:/app/monitoring/logs
+      - ../scripts/model_serving/monitoring/logs:/app/scripts/monitoring/logs
       - ../scripts/model_serving/static:/app/static
     environment:
       - MODEL_PATH=/app/models/saved/sentiment_model
       - TOKENIZER_PATH=/app/models/saved/sentiment_tokenizer
       - LOG_LEVEL=INFO
-      - LOG_DIR=/app/logs
+      - LOG_DIR=/app/scripts/monitoring/logs
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]

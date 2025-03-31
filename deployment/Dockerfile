@@ -34,6 +34,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code
 COPY scripts/model_serving/api.py /app/api.py
 COPY scripts/model_serving/predict.py /app/predict.py
+COPY models/saved/sentiment_tokenizer /app/sentiment_tokenizer
+COPY models/saved/sentiment_model /app/sentiment_model
 COPY scripts/monitoring/logger.py /app/scripts/monitoring/logger.py
 
 # Copy static files and dashboard
