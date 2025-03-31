@@ -7,6 +7,14 @@ class SentimentPredictor:
         """
         Initialize the sentiment predictor with a trained model and tokenizer.
         """
+        # Check if we're in test mode
+        self.test_mode = os.environ.get('TEST_MODE', 'false').lower() == 'true'
+        self.skip_model_load = os.environ.get('SKIP_MODEL_LOAD', 'false').lower() == 'true'
+        
+        if self.test_mode or self.skip_model_load:
+            print("Running in test mode - skipping model loading")
+            return
+            
         # Get the project root directory (2 levels up from this script)
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
         
@@ -35,6 +43,19 @@ class SentimentPredictor:
         Predict sentiment for a given text.
         Returns a dict with prediction details.
         """
+        if self.test_mode or self.skip_model_load:
+            # Return mock response in test mode
+            return {
+                "text": text,
+                "sentiment": "neutral",
+                "confidence": 50.0,
+                "probabilities": {
+                    "negative": 33.33,
+                    "neutral": 33.33,
+                    "positive": 33.33
+                }
+            }
+            
         # Tokenize the input text
         inputs = self.tokenizer(
             text,
