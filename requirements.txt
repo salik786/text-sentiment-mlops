@@ -14,4 +14,10 @@ fastapi>=0.100.0
 uvicorn>=0.22.0
 pydantic>=2.0.0
 python-multipart>=0.0.6
-tqdm>=4.65.0 
+tqdm>=4.65.0
+
+# For load testing
+locust>=2.15.1
+
+# Added flake8
+flake8==7.0.0 
