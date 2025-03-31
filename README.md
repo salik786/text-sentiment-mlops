@@ -115,6 +115,12 @@ cd deployment
 docker-compose up --build
 ```
 
+Alternatively, you can use the pre-built image from Docker Hub:
+```bash
+docker pull salik786/sentiment-analysis-api:latest
+docker run -p 8000:8000 -v $(pwd)/models/saved:/project/models/saved salik786/sentiment-analysis-api:latest
+```
+
 2. Access the application:
 - Web interface: `http://localhost:8000`
 - API endpoints: `http://localhost:8000/predict` and `http://localhost:8000/health`
