@@ -34,6 +34,11 @@ text-sentiment-mlops/
 │       ├── predict.py
 │       ├── test_api.py
 │       └── index.html
+├── deployment/            # Docker configuration
+│   ├── Dockerfile        # Container definition
+│   ├── docker-compose.yml # Container orchestration
+│   └── .dockerignore     # Files to exclude from build
+├── requirements.txt
 └── README.md
 ```
 
@@ -46,6 +51,7 @@ text-sentiment-mlops/
 - Pandas
 - scikit-learn
 - uvicorn
+- Docker (for containerized deployment)
 
 ## Installation
 
@@ -84,6 +90,8 @@ python scripts/model_training/train_model.py
 
 ### 3. Running the Application
 
+#### Local Development
+
 You need to run two servers:
 
 1. Start the FastAPI server (in one terminal):
@@ -98,6 +106,24 @@ cd scripts/model_serving
 python -m http.server 8080
 ```
 The web interface will be available at `http://localhost:8080/index.html`
+
+#### Docker Deployment
+
+1. Build and start the container:
+```bash
+cd deployment
+docker-compose up --build
+```
+
+2. Access the application:
+- Web interface: `http://localhost:8000`
+- API endpoints: `http://localhost:8000/predict` and `http://localhost:8000/health`
+
+The Docker setup includes:
+- Automatic model file mounting
+- Health checks
+- Container restart policy
+- Environment variable configuration
 
 ### 4. Testing the API
 
@@ -178,6 +204,12 @@ python scripts/model_serving/test_api.py
    - Verify both servers are running
    - Check CORS settings in `api.py`
    - Ensure correct ports are being used
+
+4. Docker Issues:
+   - Ensure Docker daemon is running
+   - Check container logs: `docker-compose logs`
+   - Verify model files are properly mounted
+   - Check environment variables in docker-compose.yml
 
 ## Contributing
 
