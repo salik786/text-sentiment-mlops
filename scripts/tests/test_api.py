@@ -1,14 +1,15 @@
-import pytest
 import requests
 import json
 
 BASE_URL = "http://localhost:8000"
+
 
 def test_health_endpoint():
     """Test the health check endpoint"""
     response = requests.get(f"{BASE_URL}/health")
     assert response.status_code == 200
     assert response.json() == {"status": "healthy"}
+
 
 def test_predict_endpoint():
     """Test the sentiment prediction endpoint"""
@@ -24,6 +25,7 @@ def test_predict_endpoint():
     assert "sentiment" in result
     assert "confidence" in result
 
+
 def test_predict_endpoint_invalid_input():
     """Test the predict endpoint with invalid input"""
     # Test with empty text
@@ -35,10 +37,12 @@ def test_predict_endpoint_invalid_input():
     )
     assert response.status_code == 400
 
+
 def test_predict_endpoint_wrong_method():
     """Test that GET method is not allowed for predict endpoint"""
     response = requests.get(f"{BASE_URL}/predict")
     assert response.status_code == 405
+
 
 def test_predict_endpoint_edge_cases():
     """Test the predict endpoint with various edge cases"""
@@ -78,6 +82,7 @@ def test_predict_endpoint_edge_cases():
     assert "sentiment" in result
     assert "confidence" in result
 
+
 def test_predict_endpoint_multilingual():
     """Test the predict endpoint with different languages"""
     # Test with Spanish text
@@ -104,6 +109,7 @@ def test_predict_endpoint_multilingual():
     assert "sentiment" in result
     assert "confidence" in result
 
+
 def test_predict_endpoint_content_types():
     """Test the predict endpoint with different content types"""
     # Test with text/plain
@@ -121,6 +127,7 @@ def test_predict_endpoint_content_types():
         data="text=This is a test"
     )
     assert response.status_code == 400
+
 
 def test_predict_endpoint_batch_requests():
     """Test the predict endpoint with rapid consecutive requests"""
@@ -140,6 +147,7 @@ def test_predict_endpoint_batch_requests():
         result = response.json()
         assert "sentiment" in result
         assert "confidence" in result
+
 
 def test_predict_endpoint_unicode():
     """Test the predict endpoint with Unicode characters"""
