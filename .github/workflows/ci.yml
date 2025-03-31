@@ -69,24 +69,44 @@ jobs:
         mkdir -p models/saved/sentiment_model
         mkdir -p models/saved/sentiment_tokenizer
         
-        # Run container with test mode
+        # Copy tokenizer files to the correct location
+        cp -r models/saved/sentiment_tokenizer/* models/saved/sentiment_tokenizer/
+        
+        # Run container with test mode and deployment info
         docker run --name test-container -d \
           -p 8000:8000 \
           -e TEST_MODE=true \
           -e SKIP_MODEL_LOAD=true \
+          -e MODEL_PATH=/app/models/saved/sentiment_model \
+          -e TOKENIZER_PATH=/app/models/saved/sentiment_tokenizer \
+          -e DEPLOYMENT_VERSION=1.0.0 \
+          -e DEPLOYMENT_ENV=ci \
+          -e BUILD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+          -v $(pwd)/models/saved/sentiment_tokenizer:/app/models/saved/sentiment_tokenizer \
           sentiment-analysis:latest
         
-        # Wait for container to start
-        sleep 10
+        # Wait for container to start and check its status
+        echo "Waiting for container to start..."
+        sleep 15
         
-        # Check container status
-        docker ps
+        # Check if container is running
+        if ! docker ps | grep -q test-container; then
+          echo "Container failed to start. Logs:"
+          docker logs test-container
+          exit 1
+        fi
         
         # Check container logs
+        echo "Container logs:"
         docker logs test-container
         
         # Test health endpoint
+        echo "Testing health endpoint..."
         curl -X GET http://localhost:8000/health
+        
+        # Test deployment endpoint
+        echo "Testing deployment endpoint..."
+        curl -X GET http://localhost:8000/test-deployment
         
         # Clean up
         docker stop test-container
