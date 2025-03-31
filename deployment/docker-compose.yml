@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     volumes:
       - ../models/saved:/app/models/saved
-      - ../scripts/model_serving/monitoring/logs:/app/scripts/monitoring/logs
+      - ../scripts/model_serving/monitoring/logs:/app/monitoring/logs
       - ../scripts/model_serving/static:/app/static
     environment:
       - MODEL_PATH=/app/models/saved/sentiment_model
