@@ -32,11 +32,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy model and tokenizer files
-COPY models/saved/sentiment_model/model.safetensors /app/models/saved/sentiment_model/
-COPY models/saved/sentiment_model/config.json /app/models/saved/sentiment_model/
-COPY models/saved/sentiment_tokenizer/vocab.txt /app/models/saved/sentiment_tokenizer/
-COPY models/saved/sentiment_tokenizer/special_tokens_map.json /app/models/saved/sentiment_tokenizer/
-COPY models/saved/sentiment_tokenizer/tokenizer_config.json /app/models/saved/sentiment_tokenizer/
+COPY models/saved/sentiment_model /app/models/saved/sentiment_model/
+COPY models/saved/sentiment_tokenizer /app/models/saved/sentiment_tokenizer/
 
 # Copy the application code
 COPY scripts/model_serving/api.py /app/api.py
