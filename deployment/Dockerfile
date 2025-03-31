@@ -31,6 +31,10 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy model and tokenizer files
+COPY models/saved/sentiment_model/* /app/models/saved/sentiment_model/
+COPY models/saved/sentiment_tokenizer/* /app/models/saved/sentiment_tokenizer/
+
 # Copy the application code
 COPY scripts/model_serving/api.py /app/api.py
 COPY scripts/model_serving/predict.py /app/predict.py
@@ -41,8 +45,8 @@ COPY scripts/model_serving/static /app/static
 COPY scripts/model_serving/static/index.html /app/static/index.html
 COPY scripts/model_serving/static/dashboard.html /app/static/dashboard.html
 
-# Create volume for logs and model files
-VOLUME ["/app/logs", "/app/models/saved"]
+# Create volume for logs
+VOLUME ["/app/logs"]
 
 # Expose the port the app runs on
 EXPOSE 8000
