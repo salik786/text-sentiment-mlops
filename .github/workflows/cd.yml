@@ -31,6 +31,11 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         
+    - name: Create model directories
+      run: |
+        mkdir -p models/saved/sentiment_model
+        mkdir -p models/saved/sentiment_tokenizer
+        
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
