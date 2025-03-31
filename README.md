@@ -9,6 +9,8 @@ This project implements a sentiment analysis system that:
 - Provides a modern web interface for user interaction
 - Implements MLOps best practices
 - Includes data processing, model training, and serving pipelines
+- Features real-time monitoring and performance tracking
+- Supports containerized deployment with Docker
 
 ## Project Structure
 
@@ -29,18 +31,43 @@ text-sentiment-mlops/
 │   ├── model_training/
 │   │   ├── preprocess_data.py
 │   │   └── train_model.py
-│   └── model_serving/
-│       ├── api.py
-│       ├── predict.py
-│       ├── test_api.py
-│       └── index.html
-├── deployment/            # Docker configuration
-│   ├── Dockerfile        # Container definition
-│   ├── docker-compose.yml # Container orchestration
-│   └── .dockerignore     # Files to exclude from build
+│   ├── model_serving/
+│   │   ├── api.py              # FastAPI application
+│   │   ├── predict.py          # Prediction logic
+│   │   ├── test_api.py         # API testing
+│   │   └── static/             # Static files
+│   │       ├── index.html      # Main interface
+│   │       └── dashboard.html  # Monitoring dashboard
+│   └── monitoring/
+│       └── logger.py           # Monitoring and logging
+├── deployment/                  # Docker configuration
+│   ├── Dockerfile              # Container definition
+│   ├── docker-compose.yml      # Container orchestration
+│   └── .dockerignore          # Files to exclude from build
+├── logs/                       # Application logs
 ├── requirements.txt
 └── README.md
 ```
+
+## Recent Updates
+
+### Monitoring System
+- Added real-time monitoring of API performance
+- Implemented logging system for request tracking
+- Created dashboard for visualizing metrics
+- Added drift detection capabilities
+
+### Static Files Organization
+- Moved static files to dedicated directory
+- Improved file structure for better maintainability
+- Added modern, responsive dashboard interface
+- Enhanced error handling and user feedback
+
+### Docker Configuration
+- Updated Dockerfile for better performance
+- Improved volume mounting for logs and static files
+- Added health checks and monitoring
+- Enhanced container security
 
 ## Prerequisites
 
@@ -140,13 +167,26 @@ python scripts/model_serving/test_api.py
 
 ## API Endpoints
 
+- `GET /`: Main interface
+- `GET /dashboard`: Monitoring dashboard
 - `GET /health`: Health check endpoint
+- `GET /stats`: Performance statistics
 - `POST /predict`: Sentiment analysis endpoint
   ```json
   {
     "text": "Your text here"
   }
   ```
+
+## Monitoring Features
+
+The monitoring system provides:
+- Real-time request tracking
+- Performance metrics visualization
+- Sentiment distribution analysis
+- Response time monitoring
+- Error rate tracking
+- Data drift detection
 
 ## Web Interface Features
 
