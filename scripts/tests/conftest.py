@@ -2,6 +2,7 @@ import pytest
 import requests
 import time
 
+
 @pytest.fixture(scope="session", autouse=True)
 def ensure_api_running():
     """Ensure the API is running before running tests"""
