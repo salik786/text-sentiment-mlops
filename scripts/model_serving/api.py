@@ -32,11 +32,16 @@ tokenizer_path = os.environ.get('TOKENIZER_PATH', str(project_root / 'models/sav
 test_mode = os.environ.get('TEST_MODE', 'false').lower() == 'true'
 skip_model_load = os.environ.get('SKIP_MODEL_LOAD', 'false').lower() == 'true'
 
+# Get deployment information
+DEPLOYMENT_VERSION = os.environ.get('DEPLOYMENT_VERSION', '1.0.0')
+DEPLOYMENT_ENV = os.environ.get('DEPLOYMENT_ENV', 'development')
+BUILD_TIMESTAMP = os.environ.get('BUILD_TIMESTAMP', datetime.now().isoformat())
+
 # Initialize FastAPI app
 app = FastAPI(
     title="Sentiment Analysis API",
     description="API for predicting sentiment of text using DistilBERT",
-    version="1.0.0"
+    version=DEPLOYMENT_VERSION
 )
 
 # Add CORS middleware with more specific configuration
@@ -156,6 +161,29 @@ async def get_stats():
     return {
         "uptime_seconds": uptime.total_seconds(),
         "start_time": app.state.start_time.isoformat()
+    }
+
+@app.get("/test-deployment")
+async def test_deployment():
+    """
+    Test endpoint to verify CI/CD pipeline deployment
+    """
+    return {
+        "status": "success",
+        "deployment_info": {
+            "version": DEPLOYMENT_VERSION,
+            "environment": DEPLOYMENT_ENV,
+            "build_timestamp": BUILD_TIMESTAMP,
+            "test_mode": test_mode,
+            "skip_model_load": skip_model_load
+        },
+        "system_info": {
+            "python_version": sys.version,
+            "torch_version": torch.__version__,
+            "model_path": model_path,
+            "tokenizer_path": tokenizer_path
+        },
+        "timestamp": datetime.now().isoformat()
     }
 
 # Run the API server
