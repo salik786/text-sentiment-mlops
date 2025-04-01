@@ -11,6 +11,8 @@ This project implements a sentiment analysis system that:
 - Includes data processing, model training, and serving pipelines
 - Features real-time monitoring and performance tracking
 - Supports containerized deployment with Docker
+- Includes load testing capabilities
+- Implements CI/CD pipeline with GitHub Actions
 
 ## Project Structure
 
@@ -24,7 +26,12 @@ text-sentiment-mlops/
 ├── models/
 │   └── saved/
 │       ├── sentiment_model/
+│       │   ├── model.safetensors
+│       │   └── config.json
 │       └── sentiment_tokenizer/
+│           ├── vocab.txt
+│           ├── special_tokens_map.json
+│           └── tokenizer_config.json
 ├── scripts/
 │   ├── data_processing/
 │   │   └── prepare_data.py
@@ -44,12 +51,28 @@ text-sentiment-mlops/
 │   ├── Dockerfile              # Container definition
 │   ├── docker-compose.yml      # Container orchestration
 │   └── .dockerignore          # Files to exclude from build
+├── .github/
+│   └── workflows/             # CI/CD pipelines
+│       ├── ci.yml             # Continuous Integration
+│       └── cd.yml             # Continuous Deployment
 ├── logs/                       # Application logs
 ├── requirements.txt
 └── README.md
 ```
 
 ## Recent Updates
+
+### CI/CD Pipeline
+- Added GitHub Actions workflows for CI/CD
+- Implemented automated testing and linting
+- Added Docker image building and pushing
+- Configured deployment environment variables
+
+### Load Testing
+- Added Locust for load testing
+- Implemented performance monitoring
+- Added concurrent user simulation
+- Created load testing scenarios
 
 ### Monitoring System
 - Added real-time monitoring of API performance
@@ -79,6 +102,7 @@ text-sentiment-mlops/
 - scikit-learn
 - uvicorn
 - Docker (for containerized deployment)
+- Locust (for load testing)
 
 ## Installation
 
@@ -120,24 +144,15 @@ python scripts/model_training/train_model.py
 
 #### Local Development
 
-You need to run two servers:
-
-1. Start the FastAPI server (in one terminal):
+Start the FastAPI server:
 ```bash
 python scripts/model_serving/api.py
 ```
 The API will be available at `http://127.0.0.1:8000`
 
-2. Start the web interface server (in another terminal):
-```bash
-cd scripts/model_serving
-python -m http.server 8080
-```
-The web interface will be available at `http://localhost:8080/index.html`
-
 #### Docker Deployment
 
-1. Build and start the container:
+1. Build and run the container:
 ```bash
 cd deployment
 docker-compose up --build
@@ -150,20 +165,23 @@ docker run -p 8000:8000 -v $(pwd)/models/saved:/project/models/saved salik786/se
 ```
 
 2. Access the application:
-- Web interface: `http://localhost:8000`
 - API endpoints: `http://localhost:8000/predict` and `http://localhost:8000/health`
+- Test deployment: `http://localhost:8000/test-deployment`
 
-The Docker setup includes:
-- Automatic model file mounting
-- Health checks
-- Container restart policy
-- Environment variable configuration
+### 4. Load Testing
 
-### 4. Testing the API
-
-You can test the API using the provided test script:
+Run load tests using Locust:
 ```bash
-python scripts/model_serving/test_api.py
+cd scripts/load_testing
+locust -f locustfile.py
+```
+Access the Locust web interface at `http://localhost:8089`
+
+### 5. Running Tests
+
+Run the test suite:
+```bash
+pytest scripts/tests/
 ```
 
 ## API Endpoints
@@ -188,6 +206,26 @@ The monitoring system provides:
 - Response time monitoring
 - Error rate tracking
 - Data drift detection
+
+## CI/CD Pipeline
+
+The project includes:
+- Automated testing with pytest
+- Code linting with flake8
+- Docker image building and pushing
+- GitHub Actions workflows
+- Environment variable management
+- Deployment versioning
+
+## Load Testing Features
+
+The load testing system provides:
+- Concurrent user simulation
+- Response time analysis
+- Request rate monitoring
+- Error rate tracking
+- Custom test scenarios
+- Real-time metrics visualization
 
 ## Web Interface Features
 
@@ -266,6 +304,4 @@ python scripts/model_serving/test_api.py
 4. Push to the branch
 5. Create a Pull Request
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
