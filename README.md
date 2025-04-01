@@ -112,6 +112,7 @@ python scripts/data_processing/prepare_data.py
 
 Train the sentiment analysis model:
 ```bash
+python scripts/model_training/preprocess_data.py
 python scripts/model_training/train_model.py
 ```
 
