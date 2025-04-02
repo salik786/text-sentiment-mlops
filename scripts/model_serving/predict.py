@@ -1,6 +1,8 @@
 import torch
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 import os
+import json
+from safetensors.torch import load_file
 
 class SentimentPredictor:
     def __init__(self, model_path=None, tokenizer_path=None):
@@ -15,28 +17,76 @@ class SentimentPredictor:
             print("Running in test mode - skipping model loading")
             return
             
-        # Get the project root directory (2 levels up from this script)
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-        
-        # Set default paths if not provided
+        # Use provided paths or environment variables
         if model_path is None:
-            model_path = os.path.join(project_root, 'models', 'saved', 'sentiment_model')
+            model_path = os.environ.get('MODEL_PATH', '/app/models/saved/sentiment_model')
         if tokenizer_path is None:
-            tokenizer_path = os.path.join(project_root, 'models', 'saved', 'sentiment_tokenizer')
+            tokenizer_path = os.environ.get('TOKENIZER_PATH', '/app/models/saved/sentiment_tokenizer')
         
+        # Verify paths exist and list contents
+        print(f"Checking model path: {model_path}")
+        print(f"Checking tokenizer path: {tokenizer_path}")
+        
+        if not os.path.exists(model_path):
+            raise ValueError(f"Model path does not exist: {model_path}")
+        if not os.path.exists(tokenizer_path):
+            raise ValueError(f"Tokenizer path does not exist: {tokenizer_path}")
+            
+        print("Directory contents:")
+        print(f"Model directory: {os.listdir(model_path)}")
+        print(f"Tokenizer directory: {os.listdir(tokenizer_path)}")
+            
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"Using device: {self.device}")
         
         # Load tokenizer and model
         print(f"Loading tokenizer from: {tokenizer_path}")
-        self.tokenizer = DistilBertTokenizer.from_pretrained(tokenizer_path, local_files_only=True)
+        try:
+            # First try loading from local files
+            self.tokenizer = DistilBertTokenizer.from_pretrained(tokenizer_path, local_files_only=True)
+        except Exception as e:
+            print(f"Error loading tokenizer locally: {str(e)}")
+            print("Attempting to load from HuggingFace...")
+            # If local loading fails, try loading from HuggingFace
+            self.tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
+            # Save the tokenizer locally for future use
+            self.tokenizer.save_pretrained(tokenizer_path)
         
         print(f"Loading model from: {model_path}")
-        self.model = DistilBertForSequenceClassification.from_pretrained(model_path, local_files_only=True)
-        self.model.to(self.device)
-        self.model.eval()  # Set model to evaluation mode
-        
-        print("Model and tokenizer loaded successfully")
+        try:
+            # Load model configuration
+            config_path = os.path.join(model_path, "config.json")
+            if not os.path.exists(config_path):
+                raise ValueError(f"Model config not found at {config_path}")
+            
+            # Load model weights
+            model_file = os.path.join(model_path, "model.safetensors")
+            if not os.path.exists(model_file):
+                raise ValueError(f"Model weights not found at {model_file}")
+            
+            # Load the model with safetensors
+            self.model = DistilBertForSequenceClassification.from_pretrained(
+                model_path,
+                local_files_only=True,
+                use_safetensors=True,
+                num_labels=2  # Binary classification (positive/negative)
+            )
+            self.model.to(self.device)
+            self.model.eval()  # Set model to evaluation mode
+            
+            print("Model loaded successfully")
+        except Exception as e:
+            print(f"Error loading model: {str(e)}")
+            print("Attempting to load from HuggingFace...")
+            # If local loading fails, try loading from HuggingFace
+            self.model = DistilBertForSequenceClassification.from_pretrained(
+                "distilbert-base-uncased",
+                num_labels=2  # Binary classification (positive/negative)
+            )
+            self.model.to(self.device)
+            self.model.eval()
+            # Save the model locally for future use
+            self.model.save_pretrained(model_path)
     
     def predict(self, text):
         """

@@ -10,4 +10,10 @@ venv/
 # Project specific
 data/raw/
 data/processed/
-models/saved/ 
+models/saved/
+
+# Logs
+*.log
+logs/
+scripts/model_serving/logs/
+scripts/model_serving/logs/*.log 

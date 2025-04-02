@@ -1,9 +1,7 @@
 import requests
 import time
-import json
-from typing import Dict, List
 import logging
-from datetime import datetime
+from typing import Dict
 
 # Configure logging
 logging.basicConfig(
@@ -65,7 +63,6 @@ class LoadBalancingTester:
         logger.info(f"Testing load distribution with {num_requests} requests...")
         
         for i in range(num_requests):
-            start_time = time.time()
             response = self.test_prediction()
             
             if response:
@@ -86,8 +83,8 @@ class LoadBalancingTester:
                 self.instance_stats[instance_id]["requests"] += 1
                 self.instance_stats[instance_id]["total_time"] += response_time
                 self.instance_stats[instance_id]["avg_time"] = (
-                    self.instance_stats[instance_id]["total_time"] / 
-                    self.instance_stats[instance_id]["requests"]
+                    self.instance_stats[instance_id]["total_time"] 
+                    / self.instance_stats[instance_id]["requests"]
                 )
             
             # Small delay between requests

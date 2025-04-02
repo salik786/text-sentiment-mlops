@@ -20,15 +20,20 @@ services:
     expose:
       - "8000"
     volumes:
-      - ../models/saved:/app/models/saved
-      - ../scripts/model_serving/monitoring/logs:/app/monitoring/logs
+      - ../models/saved/sentiment_model:/app/models/saved/sentiment_model:ro
+      - ../models/saved/sentiment_tokenizer:/app/models/saved/sentiment_tokenizer:ro
+      - ../scripts/model_serving/logs:/app/logs
       - ../scripts/model_serving/static:/app/static
+      - ../scripts:/app/scripts:ro
     environment:
       - MODEL_PATH=/app/models/saved/sentiment_model
       - TOKENIZER_PATH=/app/models/saved/sentiment_tokenizer
       - LOG_LEVEL=INFO
-      - LOG_DIR=/app/scripts/monitoring/logs
+      - LOG_DIR=/app/logs
       - INSTANCE_ID=1
+      - PYTHONPATH=/app
+      - TEST_MODE=false
+      - SKIP_MODEL_LOAD=false
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -43,15 +48,20 @@ services:
     expose:
       - "8000"
     volumes:
-      - ../models/saved:/app/models/saved
-      - ../scripts/model_serving/monitoring/logs:/app/monitoring/logs
+      - ../models/saved/sentiment_model:/app/models/saved/sentiment_model:ro
+      - ../models/saved/sentiment_tokenizer:/app/models/saved/sentiment_tokenizer:ro
+      - ../scripts/model_serving/logs:/app/logs
       - ../scripts/model_serving/static:/app/static
+      - ../scripts:/app/scripts:ro
     environment:
       - MODEL_PATH=/app/models/saved/sentiment_model
       - TOKENIZER_PATH=/app/models/saved/sentiment_tokenizer
       - LOG_LEVEL=INFO
-      - LOG_DIR=/app/scripts/monitoring/logs
+      - LOG_DIR=/app/logs
       - INSTANCE_ID=2
+      - PYTHONPATH=/app
+      - TEST_MODE=false
+      - SKIP_MODEL_LOAD=false
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -66,15 +76,20 @@ services:
     expose:
       - "8000"
     volumes:
-      - ../models/saved:/app/models/saved
-      - ../scripts/model_serving/monitoring/logs:/app/monitoring/logs
+      - ../models/saved/sentiment_model:/app/models/saved/sentiment_model:ro
+      - ../models/saved/sentiment_tokenizer:/app/models/saved/sentiment_tokenizer:ro
+      - ../scripts/model_serving/logs:/app/logs
       - ../scripts/model_serving/static:/app/static
+      - ../scripts:/app/scripts:ro
     environment:
       - MODEL_PATH=/app/models/saved/sentiment_model
       - TOKENIZER_PATH=/app/models/saved/sentiment_tokenizer
       - LOG_LEVEL=INFO
-      - LOG_DIR=/app/scripts/monitoring/logs
+      - LOG_DIR=/app/logs
       - INSTANCE_ID=3
+      - PYTHONPATH=/app
+      - TEST_MODE=false
+      - SKIP_MODEL_LOAD=false
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
