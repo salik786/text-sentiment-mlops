@@ -1,6 +1,7 @@
 from locust import HttpUser, task, between
 import random
 import json
+from collections import defaultdict
 
 # Sample texts for testing
 SAMPLE_TEXTS = [
@@ -23,7 +24,14 @@ class SentimentAnalysisUser(HttpUser):
     def on_start(self):
         """Initialize user session"""
         # Check if the API is healthy
-        self.client.get("/health")
+        with self.client.get("/health", catch_response=True) as response:
+            if response.status_code == 200:
+                data = response.json()
+                instance_id = data.get("instance_info", {}).get("id", "unknown")
+                print(f"Connected to instance {instance_id}")
+                response.success()
+            else:
+                response.failure(f"Health check failed with status code: {response.status_code}")
     
     @task(3)  # Higher weight for prediction endpoint
     def predict_sentiment(self):
@@ -39,6 +47,9 @@ class SentimentAnalysisUser(HttpUser):
             catch_response=True
         ) as response:
             if response.status_code == 200:
+                data = response.json()
+                instance_id = data.get("instance_info", {}).get("id", "unknown")
+                print(f"Request handled by instance {instance_id}")
                 response.success()
             else:
                 response.failure(f"Failed with status code: {response.status_code}")
@@ -48,6 +59,9 @@ class SentimentAnalysisUser(HttpUser):
         """Test the health check endpoint"""
         with self.client.get("/health", catch_response=True) as response:
             if response.status_code == 200:
+                data = response.json()
+                instance_id = data.get("instance_info", {}).get("id", "unknown")
+                print(f"Health check from instance {instance_id}")
                 response.success()
             else:
                 response.failure(f"Health check failed with status code: {response.status_code}")
@@ -57,6 +71,9 @@ class SentimentAnalysisUser(HttpUser):
         """Test the statistics endpoint"""
         with self.client.get("/stats", catch_response=True) as response:
             if response.status_code == 200:
+                data = response.json()
+                instance_id = data.get("instance_info", {}).get("id", "unknown")
+                print(f"Stats from instance {instance_id}")
                 response.success()
             else:
                 response.failure(f"Stats endpoint failed with status code: {response.status_code}")
