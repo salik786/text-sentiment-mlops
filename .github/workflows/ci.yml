@@ -45,13 +45,13 @@ jobs:
     - name: Lint code
       run: |
         pip install flake8
-        # Only check for critical errors in test files
-        flake8 scripts/tests/ --max-line-length=120 --exclude=__pycache__,venv --ignore=E302,E305,W293,W291,W292
         # Create a temporary .flake8 config file
         echo "[flake8]" > .flake8
         echo "ignore = E501,W503,W504" >> .flake8
         echo "exclude = scripts/tests/test_load_balancing.py" >> .flake8
-        flake8 .
+        echo "max-line-length = 120" >> .flake8
+        # Run flake8 with config file
+        flake8 . --config=.flake8
 
   build:
     needs: test
