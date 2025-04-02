@@ -31,43 +31,10 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         
-    - name: Create model directories and placeholder files
+    - name: Create model directories
       run: |
         mkdir -p models/saved/sentiment_model
         mkdir -p models/saved/sentiment_tokenizer
-        touch models/saved/sentiment_model/.placeholder
-        touch models/saved/sentiment_tokenizer/.placeholder
-        echo "{}" > models/saved/eval_results.json
-        
-        # Create placeholder directories for other required paths
-        mkdir -p scripts/model_serving/static
-        touch scripts/model_serving/static/index.html
-        touch scripts/model_serving/static/dashboard.html
-        
-        mkdir -p scripts/monitoring
-        touch scripts/monitoring/logger.py
-        
-        # Create minimal application files if they don't exist
-        mkdir -p scripts/model_serving
-        
-        # Only create these if they don't exist
-        if [ ! -f scripts/model_serving/api.py ]; then
-          echo 'from fastapi import FastAPI
-app = FastAPI()
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
-
-@app.get("/")
-def root():
-    return {"message": "Sentiment Analysis API"}' > scripts/model_serving/api.py
-        fi
-        
-        if [ ! -f scripts/model_serving/predict.py ]; then
-          echo 'def predict(text):
-    return {"sentiment": "placeholder", "confidence": 0.0}' > scripts/model_serving/predict.py
-        fi
         
     - name: Build and push Docker image
       uses: docker/build-push-action@v2

@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9
+FROM python:3.11
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -31,38 +31,23 @@ COPY deployment/requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create placeholder files to ensure directories aren't empty
+# Create placeholder files for the models
 RUN touch /app/models/saved/sentiment_model/.placeholder \
     && touch /app/models/saved/sentiment_tokenizer/.placeholder \
     && echo "{}" > /app/models/saved/eval_results.json
 
-# Copy model and tokenizer files - Docker will ignore if not found
+# Copy model files (if they exist)
 COPY models/saved/sentiment_model/* /app/models/saved/sentiment_model/ || true
 COPY models/saved/sentiment_tokenizer/* /app/models/saved/sentiment_tokenizer/ || true
 COPY models/saved/eval_results.json /app/models/saved/ || true
 
-# Copy the application code
-COPY scripts/model_serving/api.py /app/api.py || true
-COPY scripts/model_serving/predict.py /app/predict.py || true
-COPY scripts/monitoring/logger.py /app/scripts/monitoring/logger.py || true
+# Copy application code
+COPY scripts/model_serving/api.py /app/api.py
+COPY scripts/model_serving/predict.py /app/predict.py
+COPY scripts/monitoring/logger.py /app/scripts/monitoring/logger.py
 
-# Create placeholder for application files
-RUN if [ ! -f /app/api.py ]; then \
-        echo 'from fastapi import FastAPI; app = FastAPI(); @app.get("/health"); def health(): return {"status": "ok"}' > /app/api.py; \
-    fi && \
-    if [ ! -f /app/predict.py ]; then \
-        echo 'def predict(text): return {"sentiment": "placeholder", "confidence": 0.0}' > /app/predict.py; \
-    fi
-
-# Create directory and placeholder for static files
-RUN mkdir -p /app/static
-
-# Copy static files - Docker will ignore if not found
+# Copy static files
 COPY scripts/model_serving/static/* /app/static/ || true
-
-# Create placeholder static files if they don't exist
-RUN touch /app/static/index.html \
-    && touch /app/static/dashboard.html
 
 # Create volume for logs
 VOLUME ["/app/logs"]
