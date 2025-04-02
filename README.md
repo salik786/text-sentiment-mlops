@@ -11,7 +11,8 @@ This project implements a sentiment analysis system that:
 - Includes data processing, model training, and serving pipelines
 - Features real-time monitoring and performance tracking
 - Supports containerized deployment with Docker
-- Includes load testing capabilities
+- Includes load balancing across multiple instances
+- Features comprehensive load testing capabilities
 - Implements CI/CD pipeline with GitHub Actions
 
 ## Project Structure
@@ -68,11 +69,20 @@ text-sentiment-mlops/
 - Added Docker image building and pushing
 - Configured deployment environment variables
 
+### Load Balancing
+- Implemented Nginx load balancing across three API instances
+- Added health checks for each instance
+- Configured least connections algorithm for optimal distribution
+- Added instance tracking and monitoring
+- Implemented automatic failover
+
 ### Load Testing
 - Added Locust for load testing
 - Implemented performance monitoring
 - Added concurrent user simulation
 - Created load testing scenarios
+- Added instance-specific request tracking
+- Implemented response time analysis
 
 ### Monitoring System
 - Added real-time monitoring of API performance
@@ -91,6 +101,8 @@ text-sentiment-mlops/
 - Improved volume mounting for logs and static files
 - Added health checks and monitoring
 - Enhanced container security
+- Added multi-instance support with Nginx load balancing
+- Configured container networking for load balancing
 
 ## Prerequisites
 
@@ -150,23 +162,32 @@ python scripts/model_serving/api.py
 ```
 The API will be available at `http://127.0.0.1:8000`
 
-#### Docker Deployment
+#### Docker Deployment with Load Balancing
 
-1. Build and run the container:
+1. Build and run the containers:
 ```bash
 cd deployment
 docker-compose up --build
 ```
 
-Alternatively, you can use the pre-built image from Docker Hub:
-```bash
-docker pull salik786/sentiment-analysis-api:latest
-docker run -p 8000:8000 -v $(pwd)/models/saved:/project/models/saved salik786/sentiment-analysis-api:latest
-```
+This will start:
+- 3 API instances (sentiment-api-1, sentiment-api-2, sentiment-api-3)
+- 1 Nginx load balancer
+- All services will be accessible through port 8000
 
 2. Access the application:
 - API endpoints: `http://localhost:8000/predict` and `http://localhost:8000/health`
 - Test deployment: `http://localhost:8000/test-deployment`
+- Dashboard: `http://localhost:8000/dashboard`
+
+3. Verify load balancing:
+```bash
+# Check health of all instances
+curl http://localhost:8000/health
+
+# Make multiple requests to see load distribution
+for i in {1..10}; do curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"text":"This is a test"}'; done
+```
 
 ### 4. Load Testing
 
@@ -177,12 +198,52 @@ locust -f locustfile.py
 ```
 Access the Locust web interface at `http://localhost:8089`
 
+Configure the test:
+- Number of users: 10-20
+- Spawn rate: 1-2 users/second
+- Host: http://localhost:8000
+
+The test will:
+- Track requests across all instances
+- Monitor response times
+- Show load distribution
+- Display error rates
+- Provide real-time metrics
+
 ### 5. Running Tests
 
 Run the test suite:
 ```bash
 pytest scripts/tests/
 ```
+
+## Load Balancing Configuration
+
+The system uses Nginx for load balancing with the following features:
+- Least connections algorithm for optimal distribution
+- Health checks for each instance
+- Automatic failover
+- Request tracking per instance
+- Response time monitoring
+
+### Nginx Configuration
+```nginx
+upstream sentiment_api {
+    least_conn;  # Use least connections algorithm
+    
+    server sentiment-api-1:8000 max_fails=3 fail_timeout=30s;
+    server sentiment-api-2:8000 max_fails=3 fail_timeout=30s;
+    server sentiment-api-3:8000 max_fails=3 fail_timeout=30s;
+}
+```
+
+### Instance Health Checks
+Each instance provides:
+- Health status
+- Instance ID
+- Hostname
+- IP address
+- Response times
 
 ## API Endpoints
 
@@ -303,5 +364,109 @@ python scripts/model_serving/test_api.py
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
+
+## Common Issues and Solutions
+
+### Local Development Issues
+
+1. **Import Errors**
+   ```bash
+   ImportError: attempted relative import with no known parent package
+   ```
+   **Solution**: The API uses absolute imports. Make sure you're running the API from the correct directory:
+   ```bash
+   cd scripts/model_serving
+   python api.py
+   ```
+
+2. **Hostname Resolution Error**
+   ```bash
+   socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+   ```
+   **Solution**: The API will automatically fall back to localhost (127.0.0.1) if hostname resolution fails. This is normal and won't affect functionality.
+
+3. **Model Loading Issues**
+   ```bash
+   Error loading model: FileNotFoundError: [Errno 2] No such file or directory
+   ```
+   **Solution**: Ensure the model files are in the correct location:
+   ```
+   models/
+   └── saved/
+       ├── sentiment_model/
+       └── sentiment_tokenizer/
+   ```
+
+4. **Port Already in Use**
+   ```bash
+   OSError: [Errno 48] Address already in use
+   ```
+   **Solution**: Either:
+   - Stop any other service using port 8000
+   - Or change the port in api.py:
+     ```python
+     uvicorn.run("api:app", host="0.0.0.0", port=8001, reload=True)
+     ```
+
+5. **Missing Dependencies**
+   ```bash
+   ModuleNotFoundError: No module named 'transformers'
+   ```
+   **Solution**: Install required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+6. **Static Files Not Found**
+   ```bash
+   FileNotFoundError: [Errno 2] No such file or directory: 'static/index.html'
+   ```
+   **Solution**: Ensure the static directory exists with required files:
+   ```
+   scripts/model_serving/
+   └── static/
+       ├── index.html
+       └── dashboard.html
+   ```
+
+7. **CUDA/GPU Issues**
+   ```bash
+   RuntimeError: CUDA error: out of memory
+   ```
+   **Solution**: The model will automatically use CPU if CUDA is not available or if there's insufficient GPU memory.
+
+8. **Environment Variables**
+   If you need to modify the default behavior, you can set these environment variables:
+   ```bash
+   export MODEL_PATH=/path/to/model
+   export TOKENIZER_PATH=/path/to/tokenizer
+   export TEST_MODE=true
+   export SKIP_MODEL_LOAD=true
+   export INSTANCE_ID=local-1
+   ```
+
+### Testing the API
+
+After starting the API, you can test it using:
+
+1. **Health Check**
+   ```bash
+   curl http://localhost:8000/health
+   ```
+
+2. **Sentiment Prediction**
+   ```bash
+   curl -X POST http://localhost:8000/predict \
+     -H "Content-Type: application/json" \
+     -d '{"text":"I love this product!"}'
+   ```
+
+3. **Deployment Test**
+   ```bash
+   curl http://localhost:8000/test-deployment
+   ```
+
+4. **API Documentation**
+   Open in browser: `http://localhost:8000/docs`
 
 
