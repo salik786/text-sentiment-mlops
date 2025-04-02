@@ -25,8 +25,8 @@ RUN mkdir -p /app/models/saved/sentiment_model \
     /app/scripts/monitoring \
     && chmod -R 777 /app
 
-# Create a basic requirements.txt if it doesn't exist
-RUN echo "fastapi\nuvicorn\npydantic\nnumpy\npandas\nscikit-learn\ntransformers\ntorch" > requirements.txt
+# Create a basic requirements.txt with essential packages
+RUN echo "fastapi\nuvicorn\npydantic\nnumpy\npandas\nscikit-learn\ntransformers\ntorch\npython-dotenv\nrequests" > requirements.txt
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
@@ -36,18 +36,25 @@ RUN touch /app/models/saved/sentiment_model/.placeholder \
     && touch /app/models/saved/sentiment_tokenizer/.placeholder \
     && echo "{}" > /app/models/saved/eval_results.json
 
-# Copy model files if they exist
-COPY models/saved/sentiment_model/ /app/models/saved/sentiment_model/
-COPY models/saved/sentiment_tokenizer/ /app/models/saved/sentiment_tokenizer/
-COPY models/saved/eval_results.json /app/models/saved/
-
-# Copy application code
+# Copy application code first
 COPY scripts/model_serving/api.py /app/api.py
 COPY scripts/model_serving/predict.py /app/predict.py
 COPY scripts/monitoring/logger.py /app/scripts/monitoring/logger.py
 
 # Copy static files if they exist
 COPY scripts/model_serving/static/ /app/static/
+
+# Create a script to handle model file copying
+RUN echo '#!/bin/bash\n\
+if [ -d "models/saved/sentiment_model" ]; then\n\
+    cp -r models/saved/sentiment_model/* /app/models/saved/sentiment_model/\n\
+fi\n\
+if [ -d "models/saved/sentiment_tokenizer" ]; then\n\
+    cp -r models/saved/sentiment_tokenizer/* /app/models/saved/sentiment_tokenizer/\n\
+fi\n\
+if [ -f "models/saved/eval_results.json" ]; then\n\
+    cp models/saved/eval_results.json /app/models/saved/\n\
+fi' > /app/copy_models.sh && chmod +x /app/copy_models.sh
 
 # Create volume for logs
 VOLUME ["/app/logs"]
