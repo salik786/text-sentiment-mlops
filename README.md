@@ -120,7 +120,7 @@ text-sentiment-mlops/
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/salik786/text-sentiment-mlops.git
 cd text-sentiment-mlops
 ```
 
@@ -468,5 +468,52 @@ After starting the API, you can test it using:
 
 4. **API Documentation**
    Open in browser: `http://localhost:8000/docs`
+
+## Getting Started
+
+### For New Users
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/salik786/text-sentiment-mlops.git
+   cd text-sentiment-mlops
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Ensure model files are in place:
+   ```
+   models/
+   └── saved/
+       ├── sentiment_model/
+       └── sentiment_tokenizer/
+   ```
+
+4. Run the API:
+   ```bash
+   cd scripts/model_serving
+   python api.py
+   ```
+
+### For Existing Users
+
+1. Get the latest changes:
+   ```bash
+   git pull origin main
+   ```
+
+2. Install any new dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run the API:
+   ```bash
+   cd scripts/model_serving
+   python api.py
+   ```
 
 
