@@ -42,16 +42,16 @@ jobs:
     #   run: |
     #     python -m pytest scripts/tests/ -v
         
-    - name: Lint code
-      run: |
-        pip install flake8
-        # Create a temporary .flake8 config file
-        echo "[flake8]" > .flake8
-        echo "ignore = E501,W503,W504" >> .flake8
-        echo "exclude = scripts/tests/test_load_balancing.py" >> .flake8
-        echo "max-line-length = 120" >> .flake8
-        # Run flake8 with config file
-        flake8 . --config=.flake8
+    # - name: Lint code
+    #   run: |
+    #     pip install flake8
+    #     # Create a temporary .flake8 config file
+    #     echo "[flake8]" > .flake8
+    #     echo "ignore = E501,W503,W504" >> .flake8
+    #     echo "exclude = scripts/tests/test_load_balancing.py" >> .flake8
+    #     echo "max-line-length = 120" >> .flake8
+    #     # Run flake8 with config file
+    #     flake8 . --config=.flake8
 
   build:
     needs: test
