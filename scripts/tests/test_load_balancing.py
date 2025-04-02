@@ -82,10 +82,7 @@ class LoadBalancingTester:
                     }
                 self.instance_stats[instance_id]["requests"] += 1
                 self.instance_stats[instance_id]["total_time"] += response_time
-                self.instance_stats[instance_id]["avg_time"] = (
-                    self.instance_stats[instance_id]["total_time"]
-                    / self.instance_stats[instance_id]["requests"]
-                )
+                self.instance_stats[instance_id]["avg_time"] = self.instance_stats[instance_id]["total_time"] / self.instance_stats[instance_id]["requests"]
             
             # Small delay between requests
             time.sleep(0.5)
