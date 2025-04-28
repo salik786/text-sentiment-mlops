@@ -93,10 +93,7 @@ def train_model():
         warmup_steps=500,
         weight_decay=0.01,
         logging_dir='models/saved/logs',
-        logging_steps=10,
-        evaluation_strategy="epoch",
-        save_strategy="epoch",
-        load_best_model_at_end=True,
+        logging_steps=10
     )
     
     # Create Trainer
