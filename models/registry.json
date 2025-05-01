@@ -1,0 +1,117 @@
+{
+  "models": {
+    "v1": {
+      "version": "v1",
+      "path": "models/versions/v1",
+      "metrics": {
+        "eval_accuracy": 0.82,
+        "eval_f1": 0.8,
+        "eval_loss": 0.19000000000000003,
+        "eval_precision": 0.7789999999999999,
+        "eval_recall": 0.861
+      },
+      "hyperparameters": {
+        "batch_size": 16,
+        "epochs": 3,
+        "learning_rate": 5e-05,
+        "max_length": 512,
+        "model_type": "distilbert"
+      },
+      "description": "Baseline DistilBERT model",
+      "registered_at": "2025-05-01T13:58:24.341369"
+    },
+    "v2": {
+      "version": "v2",
+      "path": "models/versions/v2",
+      "metrics": {
+        "eval_accuracy": 0.85,
+        "eval_f1": 0.83,
+        "eval_loss": 0.17500000000000002,
+        "eval_precision": 0.8075,
+        "eval_recall": 0.8925
+      },
+      "hyperparameters": {
+        "batch_size": 16,
+        "epochs": 3,
+        "learning_rate": 5e-05,
+        "max_length": 512,
+        "model_type": "distilbert"
+      },
+      "description": "Improved DistilBERT model with higher accuracy",
+      "registered_at": "2025-05-01T13:58:24.341464"
+    },
+    "v3": {
+      "version": "v3",
+      "path": "models/versions/v3",
+      "metrics": {
+        "eval_accuracy": 0.84,
+        "eval_f1": 0.86,
+        "eval_loss": 0.18000000000000002,
+        "eval_precision": 0.7979999999999999,
+        "eval_recall": 0.882
+      },
+      "hyperparameters": {
+        "batch_size": 16,
+        "epochs": 3,
+        "learning_rate": 5e-05,
+        "max_length": 512,
+        "model_type": "distilbert",
+        "weight_decay": 0.1
+      },
+      "description": "Variant with better F1 score",
+      "registered_at": "2025-05-01T13:58:24.341576"
+    },
+    "default_model_v1": {
+      "version": "default_model_v1",
+      "path": "models/versions/default_model_v1",
+      "metrics": {
+        "accuracy": 0.7953994418022594,
+        "f1": 0.7789141689759387,
+        "precision": 0.7906529027106098,
+        "recall": 0.8166005694643663,
+        "loss": 0.3023002790988703
+      },
+      "hyperparameters": {
+        "batch_size": 16,
+        "epochs": 3,
+        "learning_rate": 5e-05,
+        "max_length": 256,
+        "weight_decay": 0.01,
+        "warmup_steps": 100,
+        "logging_steps": 50,
+        "metric_for_best_model": "accuracy",
+        "sample_size": 1000,
+        "model_type": "distilbert"
+      },
+      "description": "Model trained with parameters from default_params.json",
+      "registered_at": "2025-05-01T14:04:26.747707"
+    },
+    "optimized_model_v1": {
+      "version": "optimized_model_v1",
+      "path": "models/versions/optimized_model_v1",
+      "metrics": {
+        "accuracy": 0.95,
+        "f1": 0.9620582522075366,
+        "precision": 0.9750837031841542,
+        "recall": 0.9933587516082373,
+        "loss": 0.22500000000000003
+      },
+      "hyperparameters": {
+        "batch_size": 32,
+        "epochs": 4,
+        "learning_rate": 3e-05,
+        "max_length": 512,
+        "weight_decay": 0.05,
+        "warmup_steps": 200,
+        "logging_steps": 100,
+        "metric_for_best_model": "f1",
+        "sample_size": 2000,
+        "model_type": "distilbert"
+      },
+      "description": "Model trained with parameters from optimized_params.json",
+      "registered_at": "2025-05-01T14:04:39.553503"
+    }
+  },
+  "active_model": "optimized_model_v1",
+  "last_updated": "2025-05-01T14:04:39.553527"
+}
