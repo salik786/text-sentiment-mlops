@@ -1,0 +1,12 @@
+{
+  "batch_size": 32,
+  "epochs": 4,
+  "learning_rate": 3e-5,
+  "max_length": 512,
+  "weight_decay": 0.05,
+  "warmup_steps": 200,
+  "logging_steps": 100,
+  "metric_for_best_model": "f1",
+  "sample_size": 2000,
+  "model_type": "distilbert"
+} 
