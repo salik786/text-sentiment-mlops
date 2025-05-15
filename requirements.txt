@@ -1,24 +1,29 @@
 # Core libraries
-numpy>=1.24.0
-pandas>=2.0.0
-scikit-learn>=1.2.0
-torch>=2.0.0
-transformers>=4.30.0
-datasets>=2.12.0
-safetensors>=0.3.1
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.4.2
 
-# For notebook experimentation
-jupyter
+# Transformers and NLP
+transformers==4.36.2
+datasets==2.19.1
+torch==2.2.2
+accelerate==0.23.0
+safetensors==0.4.2
 
-# For model serving later
+# Model serving and monitoring
 fastapi>=0.100.0
 uvicorn>=0.22.0
 pydantic>=2.0.0
 python-multipart>=0.0.6
+
+# Training and logging
 tqdm>=4.65.0
 
-# For load testing
+# Load testing
 locust>=2.15.1
 
-# Added flake8
-flake8==7.0.0 
+# Code style
+flake8==7.0.0
+
+# Kaggle support
+kaggle==1.6.6
