@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1747400033923
+current_stage: None
+description: ''
+last_updated_timestamp: 1747400033923
+name: distilbert_Sentiment_20250516_225049
+run_id: 08e5bc6bd8b3463fba6d8b1eaf42b92b
+run_link: ''
+source: mlflow-artifacts:/716769115628435403/08e5bc6bd8b3463fba6d8b1eaf42b92b/artifacts/model
+status: READY
+status_message: null
+storage_location: mlflow-artifacts:/716769115628435403/08e5bc6bd8b3463fba6d8b1eaf42b92b/artifacts/model
+user_id: null
+version: 1

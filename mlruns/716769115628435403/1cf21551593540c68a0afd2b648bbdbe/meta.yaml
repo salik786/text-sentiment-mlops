@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/716769115628435403/1cf21551593540c68a0afd2b648bbdbe/artifacts
+end_time: 1747399772911
+entry_point_name: ''
+experiment_id: '716769115628435403'
+lifecycle_stage: active
+run_id: 1cf21551593540c68a0afd2b648bbdbe
+run_name: exp_20250516_224856
+run_uuid: 1cf21551593540c68a0afd2b648bbdbe
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747399736884
+status: 3
+tags: []
+user_id: saliksaleem
