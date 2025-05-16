@@ -11,7 +11,8 @@ models/
 data/raw/
 data/processed/
 models/saved/
-
+mlruns/
+mlartifacts/
 *.pt
 *.safetensors
 *.csv
