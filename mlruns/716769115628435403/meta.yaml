@@ -1,6 +1,0 @@
-artifact_location: mlflow-artifacts:/716769115628435403
-creation_time: 1747399735482
-experiment_id: '716769115628435403'
-last_update_time: 1747399735482
-lifecycle_stage: active
-name: DistillBert
