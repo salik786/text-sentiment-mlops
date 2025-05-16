@@ -12,6 +12,12 @@ data/raw/
 data/processed/
 models/saved/
 
+*.pt
+*.safetensors
+*.csv
+*.tgz
+data/
+models/
 # Logs
 *.log
 logs/
