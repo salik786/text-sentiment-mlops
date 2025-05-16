@@ -4,6 +4,12 @@ __pycache__/
 *$py.class
 venv/
 
+mlartifacts/
+models/
+*.dylib
+*.pt
+*.pth
+*.safetensors
 # Jupyter Notebooks
 .ipynb_checkpoints
 models/
