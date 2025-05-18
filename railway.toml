@@ -1,4 +1,4 @@
 [build]
 dockerfile = "deployment/Dockerfile"
 [deploy]
-command = "uvicorn scripts.API.main:app --host 0.0.0.0 --port $PORT"
+startcommand = "uvicorn scripts.API.main:app --host 0.0.0.0 --port $PORT"
