@@ -24,6 +24,6 @@ locust>=2.15.1
 
 # Code style
 flake8==7.0.0
-
+prometheus-client
 # Kaggle support
 kaggle==1.6.6

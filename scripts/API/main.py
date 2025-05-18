@@ -19,10 +19,12 @@ from transformers import DistilBertTokenizerFast
 import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 import nltk
-from collections import Counter
-import matplotlib.pyplot as plt
-from wordcloud import WordCloud
 import re
+from prometheus_client import start_http_server, Counter as PrometheusCounter
+import threading
+
+REQUEST_COUNT = PrometheusCounter("request_count", "Total number of requests")
+
 nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
 
@@ -66,8 +68,6 @@ def softmax(logits: np.ndarray) -> np.ndarray:
     exps = np.exp(logits - np.max(logits))
     return exps / exps.sum()
 
-
-    
 def load_model_and_tokenizer():
     global model, tokenizer
     logger.info("Loading model and tokenizer from MLflow registry...")
@@ -91,6 +91,7 @@ def predict_sentiment(text: str) -> str:
     probs = softmax(logits)
     pred = int(np.argmax(probs))
     return "positive" if pred == 1 else "negative"
+
 def highlight_sentiment_words(text: str):
     processed = clean_text_basic(text)
     tokens = tokenizer.tokenize(processed)
@@ -116,6 +117,7 @@ def highlight_sentiment_words(text: str):
         color = int(255 * (1 - weight))
         html += f'<span style="background-color:rgb(255,{color},{color}); padding:2px; border-radius:4px; margin:1px;">{word}</span> '
     return html
+
 def generate_wordcloud_and_top_words(comments):
     # Clean and split text
     words = []
@@ -124,23 +126,22 @@ def generate_wordcloud_and_top_words(comments):
         words.extend([word for word in cleaned.split() if word not in stop_words])
 
     # Count word frequencies
-    counter = Counter(words)
-    top_words = counter.most_common(10)  # top 10 frequent words
+    word_counts = Counter(words)
+    top_words = word_counts.most_common(10)  # top 10 frequent words
 
     # Generate word cloud image
-    wc = WordCloud(width=400, height=300, background_color="white").generate_from_frequencies(counter)
+    wc = WordCloud(width=400, height=300, background_color="white").generate_from_frequencies(word_counts)
     buffer = BytesIO()
     wc.to_image().save(buffer, format='PNG')
     encoded_wc = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
     return encoded_wc, top_words
+
 # ---------------- Startup ----------------
-
-
-
 @app.on_event("startup")
 def startup_event():
     try:
+        threading.Thread(target=lambda: start_http_server(8001)).start()
         load_model_and_tokenizer()
     except Exception as e:
         logger.error(f"Startup error: {e}")
@@ -193,7 +194,8 @@ def bulk_form(request: Request):
     return templates.TemplateResponse("bulk.html", {"request": request, "processed": None})
 
 @app.post("/bulk", response_class=HTMLResponse)
-async def bulk_predict(request: Request, comments: str = Form(...),file: UploadFile = File(None)):
+async def bulk_predict(request: Request, comments: str = Form(...), file: UploadFile = File(None)):
+    REQUEST_COUNT.inc()
     logger.info("Received request for bulk sentiment analysis.")
     text_data = ""
 
