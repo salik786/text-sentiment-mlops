@@ -15,11 +15,9 @@ COPY scripts/API/requirements.txt ./
 COPY scripts/API/ ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Copy application code into container
-COPY ../scripts/API/ ./
 
 # 6. Expose the port your FastAPI uses
-EXPOSE 8000
+EXPOSE 8080
 
 # 7. Default environment variables (overrideable at run-time)
 ENV MLFLOW_TRACKING_URI=https://dagshub.com/saleemsalik786/my-first-repo.mlflow \
@@ -27,4 +25,4 @@ ENV MLFLOW_TRACKING_URI=https://dagshub.com/saleemsalik786/my-first-repo.mlflow 
     MODEL_STAGE=latest
 
 # 8. Default command to start the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
