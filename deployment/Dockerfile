@@ -19,7 +19,8 @@ RUN apt-get update && \
 # Adjust path since Dockerfile is in deployment/
 COPY scripts/API/requirements.txt ./
 COPY scripts/API/ ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
 
 
 # 6. Expose the port your FastAPI uses
