@@ -1,48 +1,30 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11-slim
+# 1. Use a lightweight Python base image
+FROM python:3.9-slim
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    MODEL_PATH=/app/models/saved/sentiment_model \
-    TOKENIZER_PATH=/app/models/saved/sentiment_tokenizer \
-    LOG_DIR=/app/logs
-
-# Create necessary directories
-RUN mkdir -p /app/models/saved/sentiment_model \
-    /app/models/saved/sentiment_tokenizer \
-    /app/logs \
-    /app/static
-
-# Set working directory
+# 2. Set working directory inside the container
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# 3. Install build dependencies (if needed)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first to leverage Docker cache
-COPY requirements.txt .
-
-# Install Python dependencies
+# 4. Copy and install Python dependencies
+# Adjust path since Dockerfile is in deployment/
+COPY scripts/API/requirements.txt ./
+COPY scripts/API/ ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire scripts directory
-COPY scripts /app/scripts/
+# 5. Copy application code into container
+COPY ../scripts/API/ ./
 
-# Create symbolic link for monitoring module
-RUN ln -s /app/scripts/monitoring /app/monitoring
-
-# Copy the API files
-COPY scripts/model_serving/api.py /app/api.py
-COPY scripts/model_serving/predict.py /app/predict.py
-
-# Set permissions
-RUN chmod -R 755 /app
-
-# Expose port
+# 6. Expose the port your FastAPI uses
 EXPOSE 8000
 
-# Command to run the application
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# 7. Default environment variables (overrideable at run-time)
+ENV MLFLOW_TRACKING_URI=https://dagshub.com/saleemsalik786/my-first-repo.mlflow \
+    REGISTERED_MODEL_NAME=top_perform_model \
+    MODEL_STAGE=latest
+
+# 8. Default command to start the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
