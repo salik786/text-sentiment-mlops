@@ -6,8 +6,14 @@ WORKDIR /app
 
 # 3. Install build dependencies (if needed)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        libfreetype6-dev \
+        libpng-dev \
+        libopenblas-dev \
+        libopencv-dev \
+        git \
+    && rm -rf /var/lib/apt/lists/*
 
 # 4. Copy and install Python dependencies
 # Adjust path since Dockerfile is in deployment/

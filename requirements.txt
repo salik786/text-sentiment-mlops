@@ -9,7 +9,7 @@ datasets==2.19.1
 torch==2.2.2
 accelerate==0.23.0
 safetensors==0.4.2
-
+wordcloud
 # Model serving and monitoring
 fastapi>=0.100.0
 uvicorn>=0.22.0
