@@ -2,6 +2,7 @@ import os
 import json
 import argparse
 import pandas as pd
+import dagshub
 import numpy as np
 from datetime import datetime
 from pathlib import Path
@@ -15,7 +16,7 @@ from datasets import Dataset
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import mlflow
 import mlflow.pytorch
-
+dagshub.init(repo_owner='saleemsalik786', repo_name='my-first-repo', mlflow=True)
 # Constants
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "processed"
@@ -125,9 +126,8 @@ def train_model(train_sample_size: float, test_sample_size: float, hyperparams: 
         
         print("Evaluating model...")
         eval_results = trainer.evaluate()
-        
         training_time = (datetime.now() - start_time).total_seconds()
-        
+        mlflow.autolog()
         # Log parameters
         mlflow.log_param("model_type", model_type)
         mlflow.log_param("pretrained_model_name", pretrained_model_name)
@@ -179,7 +179,7 @@ def main():
     hyperparams["max_length"] = max_length
     
     # Set MLflow tracking URI
-    mlflow.set_tracking_uri("http://localhost:8080")
+    mlflow.set_tracking_uri("https://dagshub.com/saleemsalik786/my-first-repo.mlflow/")
     mlflow.set_experiment("DistillBert")
     
     train_model(train_sample_size, test_sample_size, hyperparams, args.config, model_type, pretrained_model_name)

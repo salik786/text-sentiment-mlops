@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+torch
+transformers
+mlflow
+jinja2
+python-multipart
+matplotlib
+nltk
+wordcloud

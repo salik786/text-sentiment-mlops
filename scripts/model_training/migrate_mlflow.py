@@ -19,7 +19,8 @@ PRODUCTION_THRESHOLDS = {
     "precision": 0.15,
     "recall": 0.15
 }
-
+import dagshub
+dagshub.init(repo_owner='saleemsalik786', repo_name='my-first-repo', mlflow=True)
 # Custom PyFunc model for MLflow
 class DummySentimentModel(mlflow.pyfunc.PythonModel):
     def __init__(self, experiment_id=None, metrics=None):
