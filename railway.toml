@@ -1,1 +1,2 @@
+[build]
 dockerfile = "deployment/Dockerfile"
