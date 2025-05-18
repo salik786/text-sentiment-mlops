@@ -25,4 +25,4 @@ ENV MLFLOW_TRACKING_URI=https://dagshub.com/saleemsalik786/my-first-repo.mlflow 
     MODEL_STAGE=latest
 
 # 8. Default command to start the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "scripts.API.main:app", "--host", "0.0.0.0", "--port", "8080"]
