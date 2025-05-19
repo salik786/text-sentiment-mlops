@@ -9,3 +9,4 @@ matplotlib
 nltk
 wordcloud
 prometheus-client
+prometheus-fastapi-instrumentator==6.0.0
