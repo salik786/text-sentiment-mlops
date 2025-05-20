@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fastapi-latest
+  name: fastapi-deployment
 spec:
   replicas: 2
   selector:
@@ -11,9 +11,22 @@ spec:
     metadata:
       labels:
         app: fastapi
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8000"
+
     spec:
       containers:
       - name: fastapi
-        image: salik786/my-fastapi
+        image: my-fastapi:latest
+        imagePullPolicy: Never
         ports:
-        - containerPort: 8080
+        - containerPort: 8000
+        volumeMounts:
+        - mountPath: /models/saved
+          name: model-volume
+      volumes:
+      - name: model-volume
+        persistentVolumeClaim:
+          claimName: sentiment-pvc

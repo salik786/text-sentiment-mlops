@@ -23,6 +23,9 @@ import re
 from prometheus_client import start_http_server, Counter, Histogram, Summary, Gauge
 from prometheus_fastapi_instrumentator import Instrumentator
 import threading
+from prometheus_client import make_asgi_app
+from fastapi.middleware.wsgi import WSGIMiddleware
+
 
 # Prometheus Metrics
 REQUEST_COUNT = Counter("request_count", "Total number of requests", ["endpoint"])
@@ -289,3 +292,8 @@ async def bulk_predict(request: Request, comments: str = Form(...), file: Upload
 if __name__ == "__main__":
     logger.info("Starting Sentiment Analysis Service...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# Mount Prometheus metrics endpoint
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
+
